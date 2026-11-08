@@ -1,0 +1,13 @@
+{% load resenas_extras %}
+<div class="tarjeta{% if resena.autor.is_staff %} experta{% endif %}">
+    <span class="puntuacion {{ resena.puntuacion|clase_puntuacion }}">{{ resena.puntuacion|puntaje }}</span>
+    <h3><a href="{% url 'resenas:detalle_resena' resena.pk %}">{{ resena.titulo }}</a></h3>
+    <p class="meta">por <a href="{% url 'resenas:perfil' resena.autor.username %}">{{ resena.autor.username }}</a> · {{ resena.fecha_creacion|date:"d M Y" }}</p>
+    <p>{{ resena.contenido|truncatewords:30|truncatechars:400 }}</p>
+    {% if resena.autor == user %}
+        <div class="acciones">
+            <a class="btn btn-sec btn-mini" href="{% url 'resenas:editar_resena' resena.pk %}">Editar</a>
+            <a class="btn btn-sec btn-mini" href="{% url 'resenas:eliminar_resena' resena.pk %}">Eliminar</a>
+        </div>
+    {% endif %}
+</div>

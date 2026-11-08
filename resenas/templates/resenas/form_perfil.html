@@ -1,0 +1,13 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}Editar perfil{% endblock %}
+{% block contenido %}
+    <h1>Editar mi perfil</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="acciones">
+            <button type="submit">Guardar perfil</button>
+            <a class="btn btn-sec" href="{% url 'resenas:perfil' user.username %}">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

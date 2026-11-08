@@ -1,0 +1,26 @@
+{% extends 'resenas/base.html' %}
+{% load resenas_extras %}
+{% block titulo %}Catálogo{% endblock %}
+{% block contenido %}
+    <h1>Catálogo de juegos</h1>
+    {% for juego in juegos %}
+        <div class="tarjeta fila">
+            {% include 'resenas/_portada.html' with tam='chica' %}
+            <div>
+                {% for p in juego.plataformas.all %}<span class="chip plat">{{ p.nombre }}</span> {% endfor %}
+                <span class="chip">{{ juego.anio_lanzamiento }}</span>
+                <span class="chip edad">{{ juego.get_clasificacion_edad_display }}</span>
+                {% if juego.puntuacion_promedio is not None %}
+                    <span class="puntuacion {{ juego.puntuacion_promedio|clase_puntuacion }}">{{ juego.puntuacion_promedio|estrellas }} {{ juego.puntuacion_promedio|floatformat:1 }}</span>
+                {% endif %}
+                <h3 style="margin:6px 0;"><a href="{% url 'resenas:detalle_juego' juego.pk %}">{{ juego.titulo }}</a></h3>
+                <div class="tags">
+                    {% for genero in juego.generos.all %}<span class="tag">{{ genero.nombre }}</span>{% endfor %}
+                </div>
+                <p class="meta">{{ juego.total_resenas }} reseña{{ juego.total_resenas|pluralize }} · {{ juego.total_calificaciones }} {% if juego.total_calificaciones == 1 %}calificación{% else %}calificaciones{% endif %}</p>
+            </div>
+        </div>
+    {% empty %}
+        <p class="meta">El administrador aún no ha registrado juegos.</p>
+    {% endfor %}
+{% endblock %}

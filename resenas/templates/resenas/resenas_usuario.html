@@ -1,0 +1,17 @@
+{% extends 'resenas/base.html' %}
+{% load resenas_extras %}
+{% block titulo %}Reseñas de {{ usuario.username }}{% endblock %}
+{% block contenido %}
+    <p><a href="{% url 'resenas:perfil' usuario.username %}">&larr; Perfil de {{ usuario.username }}</a></p>
+    <h1>Reseñas de {{ usuario.username }}</h1>
+    {% for resena in resenas %}
+        <div class="tarjeta">
+            <span class="puntuacion {{ resena.puntuacion|clase_puntuacion }}">{{ resena.puntuacion|puntaje }}</span>
+            <h3><a href="{% url 'resenas:detalle_resena' resena.pk %}">{{ resena.titulo }}</a></h3>
+            <p class="meta">{{ resena.juego.titulo }} · {{ resena.fecha_creacion|date:"d M Y" }}</p>
+            <p>{{ resena.contenido|truncatewords:30|truncatechars:400 }}</p>
+        </div>
+    {% empty %}
+        <p class="meta">Este usuario todavía no ha publicado reseñas.</p>
+    {% endfor %}
+{% endblock %}

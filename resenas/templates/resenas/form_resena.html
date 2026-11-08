@@ -1,0 +1,10 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}{% if editando %}Editar reseña{% else %}Nueva reseña{% endif %}{% endblock %}
+{% block contenido %}
+    <h1>{% if editando %}Editar tu reseña de{% else %}Escribir reseña de{% endif %} {{ juego.titulo }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{% if editando %}Guardar cambios{% else %}Publicar reseña{% endif %}</button>
+    </form>
+{% endblock %}

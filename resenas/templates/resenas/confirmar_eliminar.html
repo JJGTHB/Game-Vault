@@ -1,0 +1,11 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}Eliminar reseña{% endblock %}
+{% block contenido %}
+    <h1>Eliminar reseña</h1>
+    <p>¿Seguro que quieres eliminar «{{ resena.titulo }}»? Esta acción no se puede deshacer.</p>
+    <form method="post" class="acciones">
+        {% csrf_token %}
+        <button type="submit" class="btn-peligro">Sí, eliminar</button>
+        <a class="btn btn-sec" href="{% url 'resenas:detalle_resena' resena.pk %}">Cancelar</a>
+    </form>
+{% endblock %}

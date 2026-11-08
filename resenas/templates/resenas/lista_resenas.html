@@ -1,0 +1,31 @@
+{% extends 'resenas/base.html' %}
+{% load resenas_extras %}
+{% block titulo %}Reseñas{% endblock %}
+{% block contenido %}
+    <h1>Reseñas</h1>
+
+    <form method="get" style="margin-bottom:20px; max-width:320px;">
+        <label class="meta">Filtrar por género</label>
+        <select name="genero" onchange="this.form.submit()">
+            <option value="">Todos</option>
+            {% for genero in generos %}
+                <option value="{{ genero.pk }}" {% if genero_seleccionado == genero.pk|stringformat:"s" %}selected{% endif %}>{{ genero.nombre }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% for resena in resenas %}
+        <div class="tarjeta{% if resena.autor.is_staff %} experta{% endif %}">
+            <span class="puntuacion {{ resena.puntuacion|clase_puntuacion }}">{{ resena.puntuacion|puntaje }}</span>
+            {% if resena.autor.is_staff %}<span class="chip experta">Reseña experta</span>{% endif %}
+            <h3><a href="{% url 'resenas:detalle_resena' resena.pk %}">{{ resena.titulo }}</a></h3>
+            <p class="meta">{{ resena.juego.titulo }} — por <a href="{% url 'resenas:perfil' resena.autor.username %}">{{ resena.autor.username }}</a> · {{ resena.fecha_creacion|date:"d M Y" }}</p>
+            <div class="tags">
+                {% for genero in resena.juego.generos.all %}<span class="tag">{{ genero.nombre }}</span>{% endfor %}
+            </div>
+            <p>{{ resena.contenido|truncatewords:35|truncatechars:400 }}</p>
+        </div>
+    {% empty %}
+        <p class="meta">No hay reseñas para mostrar.</p>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}Comentarios de {{ usuario.username }}{% endblock %}
+{% block contenido %}
+    <p><a href="{% url 'resenas:perfil' usuario.username %}">&larr; Perfil de {{ usuario.username }}</a></p>
+    <h1>Comentarios de {{ usuario.username }}</h1>
+    {% for comentario in comentarios %}
+        <div class="tarjeta">
+            <p class="meta" style="margin-top:0;">
+                En la reseña <a href="{% url 'resenas:detalle_resena' comentario.resena.pk %}">«{{ comentario.resena.titulo }}»</a>
+                de {{ comentario.resena.juego.titulo }} · {{ comentario.fecha_creacion|date:"d M Y, H:i" }}
+            </p>
+            {% if comentario.censurado %}
+                <p class="comentario-censurado">Este comentario fue censurado por un administrador.</p>
+            {% else %}
+                <p>{{ comentario.contenido|linebreaksbr }}</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="meta">Este usuario todavía no ha comentado.</p>
+    {% endfor %}
+{% endblock %}

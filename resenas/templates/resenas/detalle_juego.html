@@ -1,0 +1,49 @@
+{% extends 'resenas/base.html' %}
+{% load resenas_extras %}
+{% block titulo %}{{ juego.titulo }}{% endblock %}
+{% block contenido %}
+    <div class="fila">
+        {% include 'resenas/_portada.html' with tam='grande' %}
+        <div>
+            {% for p in juego.plataformas.all %}<span class="chip plat">{{ p.nombre }}</span> {% endfor %}
+            <span class="chip">{{ juego.anio_lanzamiento }}</span>
+            <span class="chip edad">{{ juego.get_clasificacion_edad_display }}</span>
+            <h1 style="margin:8px 0;">{{ juego.titulo }}</h1>
+            <div class="tags">
+                {% for genero in juego.generos.all %}<span class="tag">{{ genero.nombre }}</span>{% endfor %}
+            </div>
+            {% if juego.puntuacion_promedio is not None %}
+                <p>
+                    <span class="puntuacion {{ juego.puntuacion_promedio|clase_puntuacion }}">{{ juego.puntuacion_promedio|estrellas }} {{ juego.puntuacion_promedio|floatformat:1 }} / 5</span>
+                    <span class="meta">({{ juego.total_calificaciones }} {% if juego.total_calificaciones == 1 %}calificación{% else %}calificaciones{% endif %})</span>
+                </p>
+            {% else %}
+                <p class="meta">Aún sin calificaciones.</p>
+            {% endif %}
+            <p>{{ juego.descripcion|linebreaksbr }}</p>
+        </div>
+    </div>
+
+    <div class="tarjeta" style="margin-top:20px;">
+        <form method="post" action="{% url 'resenas:calificar_juego' juego.pk %}" style="display:flex; gap:12px; align-items:end; flex-wrap:wrap;">
+            {% csrf_token %}
+            <div style="min-width:180px;">{{ form_calificacion.as_p }}</div>
+            <p><button type="submit">Calificar</button></p>
+            <p><a class="btn btn-sec" href="{% url 'resenas:crear_resena' juego.pk %}">Escribir una reseña</a></p>
+        </form>
+    </div>
+
+    <h2 style="margin-top:28px;">Reseñas expertas</h2>
+    {% for resena in resenas_expertas %}
+        {% include 'resenas/_tarjeta_resena.html' %}
+    {% empty %}
+        <p class="meta">El administrador aún no ha publicado una reseña de este juego.</p>
+    {% endfor %}
+
+    <h2>Reseñas de la comunidad</h2>
+    {% for resena in resenas_comunidad %}
+        {% include 'resenas/_tarjeta_resena.html' %}
+    {% empty %}
+        <p class="meta">Todavía no hay reseñas de usuarios. ¡Escribe la primera!</p>
+    {% endfor %}
+{% endblock %}

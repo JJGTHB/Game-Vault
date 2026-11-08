@@ -1,0 +1,15 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}Iniciar sesión{% endblock %}
+{% block contenido %}
+    <h1>Iniciar sesión</h1>
+    <p class="meta">
+        ¿Eres administrador? Inicia sesión directamente en el
+        <a href="{% url 'admin:index' %}">panel de administración</a>.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Entrar</button>
+    </form>
+    <p class="meta">¿No tienes cuenta? <a href="{% url 'resenas:registro' %}">Regístrate aquí</a>.</p>
+{% endblock %}

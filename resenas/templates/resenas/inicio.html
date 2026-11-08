@@ -1,0 +1,58 @@
+{% extends 'resenas/base.html' %}
+{% load resenas_extras %}
+{% block titulo %}GameVault - Inicio{% endblock %}
+{% block contenido %}
+    <h1>Bienvenido a GameVault</h1>
+    <p class="meta">
+        El portal de reseñas de videojuegos. Explora el catálogo oficial, lee las reseñas
+        expertas del administrador y comparte tu propia opinión con la comunidad.
+    </p>
+
+    <div class="acciones" style="margin: 18px 0 28px;">
+        <a class="btn" href="{% url 'resenas:lista_resenas' %}">Ver todas las reseñas</a>
+        <a class="btn btn-sec" href="{% url 'resenas:lista_juegos' %}">Explorar el catálogo</a>
+    </div>
+
+    {% if user.is_authenticated %}
+        <h2>Juegos con más actividad</h2>
+        <div class="ranking">
+            {% for juego in top_juegos %}
+                <div class="tarjeta">
+                    <span class="puesto">#{{ forloop.counter }}</span>
+                    {% include 'resenas/_portada.html' with tam='cartel' %}
+                    <h3><a href="{% url 'resenas:detalle_juego' juego.pk %}">{{ juego.titulo }}</a></h3>
+                    {% if juego.puntuacion_promedio is not None %}
+                        <span class="puntuacion {{ juego.puntuacion_promedio|clase_puntuacion }}">★ {{ juego.puntuacion_promedio|floatformat:1 }}</span>
+                    {% endif %}
+                    <p class="meta" style="margin:6px 0 0;">
+                        {{ juego.n_resenas }} reseña{{ juego.n_resenas|pluralize }} ·
+                        {{ juego.n_calificaciones }} {% if juego.n_calificaciones == 1 %}calificación{% else %}calificaciones{% endif %} ·
+                        {{ juego.n_comentarios }} comentario{{ juego.n_comentarios|pluralize }}
+                    </p>
+                </div>
+            {% empty %}
+                <p class="meta">El administrador aún no ha registrado juegos.</p>
+            {% endfor %}
+        </div>
+
+        <h2>Reseñas más recientes</h2>
+        {% for resena in ultimas_resenas %}
+            <div class="tarjeta{% if resena.autor.is_staff %} experta{% endif %}">
+                <span class="puntuacion {{ resena.puntuacion|clase_puntuacion }}">{{ resena.puntuacion|puntaje }}</span>
+                {% if resena.autor.is_staff %}<span class="chip experta">Reseña experta</span>{% endif %}
+                <h3><a href="{% url 'resenas:detalle_resena' resena.pk %}">{{ resena.titulo }}</a></h3>
+                <p class="meta">{{ resena.juego.titulo }} — por <a href="{% url 'resenas:perfil' resena.autor.username %}">{{ resena.autor.username }}</a></p>
+            </div>
+        {% empty %}
+            <p class="meta">Todavía no hay reseñas.</p>
+        {% endfor %}
+    {% else %}
+        <div class="tarjeta">
+            <p>Para ver el catálogo y las reseñas necesitas una cuenta.</p>
+            <div class="acciones">
+                <a class="btn" href="{% url 'resenas:registro' %}">Crear cuenta</a>
+                <a class="btn btn-sec" href="{% url 'login' %}">Iniciar sesión</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'resenas/base.html' %}
+{% block titulo %}Perfil de {{ usuario.username }}{% endblock %}
+{% block contenido %}
+    <div class="tarjeta">
+        <h1 style="margin-top:0;">
+            {{ usuario.username }}
+            {% if usuario.is_staff %}<span class="chip admin">Administrador</span>{% endif %}
+        </h1>
+        {% if perfil.descripcion %}
+            <p>{{ perfil.descripcion|linebreaksbr }}</p>
+        {% else %}
+            <p class="meta">Este usuario aún no ha escrito una descripción.</p>
+        {% endif %}
+        {% if usuario == user %}
+            <a class="btn btn-sec btn-mini" href="{% url 'resenas:editar_perfil' %}">Editar mi perfil</a>
+        {% endif %}
+    </div>
+
+    <h2>Juegos favoritos</h2>
+    <div class="fav-grid">
+        {% for juego in favoritos %}
+            <div>
+                {% include 'resenas/_portada.html' with tam='' %}
+                <a href="{% url 'resenas:detalle_juego' juego.pk %}">{{ juego.titulo }}</a>
+            </div>
+        {% empty %}
+            <p class="meta" style="grid-column:1/-1;">Todavía no ha elegido juegos favoritos.</p>
+        {% endfor %}
+    </div>
+
+    <div class="acciones">
+        <a class="btn" href="{% url 'resenas:resenas_usuario' usuario.username %}">Ver sus reseñas ({{ total_resenas }})</a>
+        <a class="btn btn-sec" href="{% url 'resenas:comentarios_usuario' usuario.username %}">Ver sus comentarios ({{ total_comentarios }})</a>
+    </div>
+{% endblock %}
